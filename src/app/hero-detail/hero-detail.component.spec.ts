@@ -1,10 +1,11 @@
 import { FormsModule } from '@angular/forms';
-import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, flush, async } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { HeroDetailComponent } from './hero-detail.component';
 import { HeroService } from '../hero.service';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
+import { setTimeout } from 'timers';
 
 describe('HeroDetailComponent', () => {
     let mockActivatedRoute, mockHeroService, mockLocation;
@@ -34,4 +35,26 @@ describe('HeroDetailComponent', () => {
         fixture.detectChanges();
         expect(fixture.nativeElement.querySelector('h2').textContent).toContain('SUPERDUDE');
     });
+
+    it('should call updateHero when save is called', fakeAsync(() => {
+        mockHeroService.updateHero.and.returnValue(of({}));
+        fixture.detectChanges();
+
+        fixture.componentInstance.save();
+        flush();
+
+        expect(mockHeroService.updateHero).toHaveBeenCalled();
+    }));
+
+    // No work fine with time out
+    /* it('should call updateHero when save is called', async(() => {
+        mockHeroService.updateHero.and.returnValue(of({}));
+        fixture.detectChanges();
+
+        fixture.componentInstance.save();
+
+        fixture.whenStable().then(() => {
+            expect(mockHeroService.updateHero).toHaveBeenCalled();
+        });
+    })); */
 });
